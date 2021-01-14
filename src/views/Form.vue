@@ -3,37 +3,34 @@
     <div class="container">
       <div class="columns">
         <div class="column is-4 is-offset-4">
-          <Tweet :id="tweetId" :key="tweetId" class="is-flex"></Tweet>
+          <Tweet :id="tweetId" :key="tweetId" class="is-flex">
+            <b-progress></b-progress>
+          </Tweet>
 
           <form @submit="rateTweet">
-            <b-field class="pt-2" label="Nivel de confianza">
-              <b-slider v-model="confidence" lazy indicator></b-slider>
-            </b-field>
 
             <div class="block">
-              <p class="label">¿Es historia?</p>
+              <p class="label">¿El Tweet describe una historia de guerra?</p>
               <b-field>
                 <b-radio-button v-model="isHistory"
                     native-value=true
                     size="is-large"
                     expanded
-                    required
                     type="is-success is-light is-outlined">
-                    Sí
+                    Sí (S)
                 </b-radio-button>
                 <b-radio-button v-model="isHistory"
                     native-value=false
                     size="is-large"
                     expanded
-                    required
                     type="is-danger is-light is-outlined">
-                    No
+                    No (N)
                 </b-radio-button>
               </b-field>
             </div>
-            <b-button native-type="submit" type="is-success" size="is-large" expanded :disabled="isDisabled">Guardar</b-button>
+            <b-button native-type="submit" type="is-success" size="is-large" expanded :disabled="isDisabled">Guardar (Enter)</b-button>
           </form>
-          <b-button class="mt-2" type="is-text" size="is-medium" expanded @click="getRandomTweet">Saltar tweet</b-button>
+          <b-button class="mt-2" type="is-text" size="is-medium" expanded @click="getNextTweet">Saltar tweet (ESC)</b-button>
         </div>
       </div>
     </div>
@@ -47,8 +44,7 @@ export default {
   data() {
     return {
       tweetId: '',
-      confidence: 0,
-      isHistory: '',
+      isHistory: null,
     }
   },
   components: {
@@ -56,27 +52,26 @@ export default {
   },
   computed: {
     isDisabled() {
-      return !this.confidence || !this.isHistory
+      return !this.isHistory
     }
   },
   methods: {
     rateTweet(e) {
-      alert(`Tweet sent. tweetId ${this.tweetId} | confidence ${this.confidence} | isHistory ${this.isHistory}. Will load a new tweet!`)
-      this.getRandomTweet()
+      alert(`Tweet sent. tweetId ${this.tweetId} | isHistory ${this.isHistory}. Will load a new tweet!`)
+      this.getNextTweet()
       e.preventDefault()
     },
-    getRandomTweet() {
+    getNextTweet() {
       console.log("Sacando un random tweet mediante un API")
       const randomTweets = ["1341161863103488003", "1338243989561073664", "1349556594237792256", "1349496845635100672", "1349185664240283648", "1348787778591596545"]
 
       this.tweetId = randomTweets[Math.random() * randomTweets.length | 0]
-      this.confidence = 0
       this.isHistory = ''
     }
   },
   created() {
     console.log("API CALL PARA SACAR ")
-    this.getRandomTweet()
+    this.getNextTweet()
   }
 };
 </script>
