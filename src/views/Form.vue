@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     rateTweet(e) {
-      alert(`Tweet sent. tweetId ${this.tweetId} | isHistory ${this.isHistory}. Will load a new tweet!`)
+      alert(`Tweet sent. tweetId ${this.tweetId} | confidence ${this.confidence} | isHistory ${this.isHistory}. Will load a new tweet!`)
       this.getNextTweet()
       e.preventDefault()
     },
@@ -67,12 +67,24 @@ export default {
 
       this.tweetId = randomTweets[Math.random() * randomTweets.length | 0]
       this.isHistory = ''
+    },
+    doCommand(e) {
+    let cmd = String.fromCharCode(e.keyCode).toLowerCase();
+      if(cmd==='s'||cmd=='n'){
+        //De momento no hay endopoints que enviar pero una vez este listo se agrega a las actioins para si y no
+        alert(`you  pressed ${cmd}`)
+      }
     }
-  },
+  }
+  ,
   created() {
     console.log("API CALL PARA SACAR ")
     this.getNextTweet()
-  }
+    window.addEventListener('keypress', this.doCommand);
+  },
+destroyed() {
+  window.removeEventListener('keypress', this.doCommand);
+}
 };
 </script>
 
