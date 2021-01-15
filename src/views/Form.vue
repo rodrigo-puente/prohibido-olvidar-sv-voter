@@ -71,12 +71,22 @@ export default {
     },
     doCommand(e) {
     let cmd = String.fromCharCode(e.keyCode).toLowerCase();
-    if(cmd==='s'||cmd=='n'){
-      //De momento no hay endopoints que enviar pero una vez este listo se agrega a las actioins para si y no
-      alert(`you  pressed ${cmd}`)
+      if(cmd==='s'||cmd=='n'){
+        //De momento no hay endopoints que enviar pero una vez este listo se agrega a las actioins para si y no
+        alert(`you  pressed ${cmd}`)
+      }
     }
   }
+  ,
+  created() {
+    console.log("API CALL PARA SACAR ")
+    this.getRandomTweet()
+    window.addEventListener('keypress', this.doCommand);
   },
+destroyed() {
+  window.removeEventListener('keypress', this.doCommand);
+}
+};
 </script>
 
 <style scoped lang="scss">
