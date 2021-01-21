@@ -61,8 +61,8 @@ export default {
   },
   methods: {
     rateTweet(e) {
-      this.current_tweet.yes_vote += (this.isHistory) ? 1 : 0;
-      this.current_tweet.no_vote += (this.isHistory) ? 0 : 1;
+      this.current_tweet.yes_vote += (this.isHistory === 'true') ? 1 : 0;
+      this.current_tweet.no_vote += (this.isHistory ===  'true') ? 0 : 1;
 
       this.isHistory = null;
       api
