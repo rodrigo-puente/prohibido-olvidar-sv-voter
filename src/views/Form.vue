@@ -17,20 +17,20 @@
                     size="is-large"
                     expanded
                     type="is-success is-light is-outlined">
-                    Sí (S)
+                    Sí
                 </b-radio-button>
                 <b-radio-button v-model="isHistory"
                     native-value=false
                     size="is-large"
                     expanded
                     type="is-danger is-light is-outlined">
-                    No (N)
+                    No
                 </b-radio-button>
               </b-field>
             </div>
-            <b-button native-type="submit" type="is-success" size="is-large" expanded :disabled="isDisabled">Guardar (Enter)</b-button>
+            <b-button native-type="submit" type="is-success" size="is-large" expanded :disabled="isDisabled">Guardar</b-button>
           </form>
-          <b-button class="mt-2" type="is-text" size="is-medium" expanded @click="getNextTweet">Saltar tweet (ESC)</b-button>
+          <b-button class="mt-2" type="is-text" size="is-medium" expanded @click="getNextTweet">Saltar tweet</b-button>
         </div>
       </div>
     </div>
@@ -38,11 +38,15 @@
 </template>
 <script>
 import { Tweet } from 'vue-tweet-embed'
+import axios from 'axios'
+
+const api = axios.create({baseURL: "https://memoriahistorica-backend.hackerspace.sv/apis/memento"})
 
 export default {
   name: 'Form',
   data() {
     return {
+      current_tweet: null,
       tweetId: '',
       isHistory: null,
     }
@@ -57,23 +61,37 @@ export default {
   },
   methods: {
     rateTweet(e) {
-      alert(`Tweet sent. tweetId ${this.tweetId} | confidence ${this.confidence} | isHistory ${this.isHistory}. Will load a new tweet!`)
-      this.getNextTweet()
+      this.current_tweet.yes_vote += (this.isHistory) ? 1 : 0;
+      this.current_tweet.no_vote += (this.isHistory) ? 0 : 1;
+
+      this.isHistory = null;
+      api
+        .put(
+          '/'+this.current_tweet.id_pro,
+          this.current_tweet
+          )
+        .finally(() => {
+          this.getNextTweet();
+        })
       e.preventDefault()
     },
     getNextTweet() {
       console.log("Sacando un random tweet mediante un API")
-      const randomTweets = ["1341161863103488003", "1338243989561073664", "1349556594237792256", "1349496845635100672", "1349185664240283648", "1348787778591596545"]
 
-      this.tweetId = randomTweets[Math.random() * randomTweets.length | 0]
-      this.isHistory = ''
+      api
+        .get('/nextTweet')
+        .then(
+          response => {
+            console.log(response)
+            if(response.data.length>0) {
+              this.current_tweet = response.data[0]
+              this.tweetId = response.data[0].id.toString()
+              this.isHistory = ''
+            }
+          }
+        )
     },
-    doCommand(e) {
-    let cmd = String.fromCharCode(e.keyCode).toLowerCase();
-      if(cmd==='s'||cmd=='n'){
-        //De momento no hay endopoints que enviar pero una vez este listo se agrega a las actioins para si y no
-        alert(`you  pressed ${cmd}`)
-      }
+    doCommand() {
     }
   }
   ,
